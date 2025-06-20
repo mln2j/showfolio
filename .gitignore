@@ -1,0 +1,33 @@
+# Node modules
+client/node_modules/
+server/node_modules/
+
+# Build output
+client/.next/
+client/out/
+server/dist/
+server/build/
+
+# Environment variables
+client/.env
+client/.env.local
+server/.env
+server/.env.local
+
+# Log files
+*.log
+
+# IDE/editor files
+.idea/
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Dependency locks (ako koristiš samo npm, možeš zadržati lock file)
+# Ako koristiš i npm i yarn, ignoriraj jedan
+# yarn.lock
+# package-lock.json
+
+# Coverage
+coverage/
