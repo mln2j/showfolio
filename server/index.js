@@ -18,7 +18,11 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://192.168.0.75:3000'],
+    origin: [
+        'http://localhost:3000',
+        'https://192.168.0.75:3000',
+        'https://showfolio.netlify.app'
+    ],
     credentials: true
 };
 
