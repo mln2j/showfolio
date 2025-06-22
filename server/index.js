@@ -36,10 +36,11 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 // Debug funkcija za cookie opcije
 function getCookieOptions() {
-    // Privremeno: jednostavne opcije bez sigurnosnih postavki
     return {
-        httpOnly: false, // privremeno omogućeno za debug
-        maxAge: 3600000
+        httpOnly: true,
+            sameSite: 'none',
+            secure: true,
+            maxAge: 3600000,
     };
 }
 
