@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- S -->
+    <path
+            d="M18 44c0 4.418 4.03 8 9 8 4.97 0 9-3.582 9-8 0-4.418-4.03-8-9-8-4.97 0-9-3.582-9-8 0-4.418 4.03-8 9-8 4.97 0 9 3.582 9 8"
+            stroke="#6366f1"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+    />
+    <!-- F -->
+    <path
+            d="M44 20v24M44 20h10M44 32h8"
+            stroke="#6366f1"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+    />
+</svg>
