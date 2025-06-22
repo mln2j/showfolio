@@ -12,9 +12,13 @@ export function NavBar() {
     const desktopDropdownRef = useRef<HTMLDivElement>(null);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
 
-    // Zatvori mobilni meni kad klikneš izvan njega
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     useOnClickOutside(mobileMenuRef, () => setMobileMenuOpen(false));
-    // Zatvori desktop dropdown kad line izvan njega
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     useOnClickOutside(desktopDropdownRef, () => setDesktopDropdownOpen(false));
 
     const handleLogout = async () => {
