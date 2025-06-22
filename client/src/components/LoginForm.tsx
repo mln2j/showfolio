@@ -21,7 +21,7 @@ export default function LoginForm() {
         if (res.ok) {
             setTimeout(() => {
                 window.location.href = '/profileSetup';
-            }, 200); // 200-300ms je dovoljno
+            }, 2000000); // 200-300ms je dovoljno
         } else {
             const data = await res.json();
             setMsg(data.message || 'Login failed');
