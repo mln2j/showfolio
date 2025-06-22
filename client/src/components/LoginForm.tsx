@@ -19,7 +19,9 @@ export default function LoginForm() {
         });
 
         if (res.ok) {
-            window.location.href = '/profileSetup'; // Redirect nakon uspješnog logina
+            setTimeout(() => {
+                window.location.href = '/profileSetup';
+            }, 200); // 200-300ms je dovoljno
         } else {
             const data = await res.json();
             setMsg(data.message || 'Login failed');
