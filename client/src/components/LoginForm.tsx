@@ -1,8 +1,9 @@
 'use client'
+import React from 'react';
 import { useState } from 'react';
 
 export default function LoginForm() {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
 
@@ -13,19 +14,49 @@ export default function LoginForm() {
         const res = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ email, password }),
+            credentials: 'include'
         });
-        const data = await res.json();
-        setMsg(data.message || (res.ok ? 'Prijava uspješna!' : 'Greška'));
+
+        if (res.ok) {
+            window.location.href = '/profileSetup'; // Redirect nakon uspješnog logina
+        } else {
+            const data = await res.json();
+            setMsg(data.message || 'Login failed');
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Prijava</h2>
-            <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Korisničko ime" required />
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Lozinka" required />
-            <button type="submit">Prijavi se</button>
-            <div>{msg}</div>
+        <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    autoComplete="email"
+                />
+            </div>
+
+            <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Your password"
+                    required
+                    autoComplete="current-password"
+                />
+            </div>
+
+            <button type="submit" className="btn-primary">Login</button>
+
+            {msg && <div className="form-message">{msg}</div>}
         </form>
     );
 }
