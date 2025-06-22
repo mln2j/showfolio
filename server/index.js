@@ -25,7 +25,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('*', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
+    res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(','));
+    res.setHeader('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.sendStatus(204);
+});
 app.use(express.json());
 app.use(cookieParser());
 
