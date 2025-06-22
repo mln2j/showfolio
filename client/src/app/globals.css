@@ -926,4 +926,134 @@ a {
   }
 }
 
+/* Hamburger */
+.navbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  position: relative;
+  z-index: 12001;
+}
+.bar {
+  display: block;
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 4px;
+  background: var(--primary, #6366f1);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+.bar:nth-child(1) {
+  top: 14px;
+}
+.bar:nth-child(2) {
+  top: 20px;
+}
+.bar:nth-child(3) {
+  top: 26px;
+}
+.navbar-hamburger.open .bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.navbar-hamburger.open .bar:nth-child(2) {
+  opacity: 0;
+}
+.navbar-hamburger.open .bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Sheet */
+.navbar-sheet {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 0;
+  background: var(--primary, #6366f1);
+  color: #fff;
+  z-index: 12000;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+  transition: height 0.33s cubic-bezier(.4,0,.2,1), box-shadow 0.33s cubic-bezier(.4,0,.2,1);
+  display: flex;
+  flex-direction: column;
+}
+.navbar-sheet.open {
+  height: 100vh;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.navbar-sheet-content {
+  margin: 32px auto 0 auto;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.navbar-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.navbar-sheet-links {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.navbar-sheet-link {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.navbar-sheet-link:hover {
+  color: #dbeafe;
+}
+.navbar-sheet-link.logout {
+  color: #f87171;
+}
+.navbar-email {
+  font-size: 0.98rem;
+  opacity: 0.8;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .navbar-user-desktop {
+    display: none !important;
+  }
+  .navbar-hamburger {
+    display: block;
+  }
+  .navbar-sheet {
+    display: flex;
+  }
+}
+@media (min-width: 701px) {
+  .navbar-hamburger,
+  .navbar-sheet {
+    display: none !important;
+  }
+  .navbar-user-desktop {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+  }
+  .navbar-user-name {
+    margin-left: 10px;
+    font-weight: 600;
+    color: var(--foreground, #222);
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    display: inline-block;
+  }
+}
 
