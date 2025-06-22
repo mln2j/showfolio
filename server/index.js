@@ -48,15 +48,17 @@ mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Funkcija za cookie opcije
 function getCookieOptions() {
+    const isProduction = process.env.NODE_ENV === 'production';
+
     return {
         httpOnly: true,
-        sameSite: 'none',
-        secure: true,
+        sameSite: isProduction ? 'none' : 'lax',
+        secure: isProduction,
         maxAge: 3600000
     };
 }
+
 
 const authenticate = (req, res, next) => {
     const token = req.cookies.token;
