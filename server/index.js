@@ -37,9 +37,7 @@ function getCookieOptions(req) {
     const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
     if (isLocalhost) {
         return {
-            httpOnly: true,
-            sameSite: 'lax',
-            secure: false,
+            httpOnly: false,
             maxAge: 3600000
         };
     } else {
