@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const User = require('./models/User');
 const multer = require('multer');
-const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
