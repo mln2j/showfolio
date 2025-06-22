@@ -11,7 +11,7 @@ export function NavBar() {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
 
     // @ts-expect-error Ne razumijem ovaj error
-    useOnClickOutside(dropdownRef, () => setMenuOpen(false));
+    useOnClickOutside(menuRef, () => setMenuOpen(false));
 
     const handleLogout = async () => {
         await fetch(`${API_URL}/api/logout`, {
