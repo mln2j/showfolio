@@ -4,15 +4,28 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
-const User = require('./models/User');
 const multer = require('multer');
+const fs = require('fs');
 const path = require('path');
-
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5050;
 
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+    console.log('Created uploads directory');
+}
+
+// Multer konfiguracija
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'uploads/'),
+    filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+});
+const upload = multer({ storage });
+
+// CORS konfiguracija
 const corsOptions = {
     origin: [
         'http://localhost:3000',
@@ -27,14 +40,15 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static('uploads'));
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// Spajanje na bazu
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Debug funkcija za cookie opcije
+// Funkcija za cookie opcije
 function getCookieOptions() {
-    // Privremeno: jednostavne opcije bez sigurnosnih postavki
     return {
         httpOnly: true,
         sameSite: 'none',
@@ -43,14 +57,7 @@ function getCookieOptions() {
     };
 }
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'uploads/'),
-    filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
-});
-const upload = multer({ storage });
-
-app.use('/uploads', express.static('uploads'));
-
+// Auth middleware
 const authenticate = (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
@@ -121,9 +128,6 @@ app.post('/api/register', async (req, res) => {
         // AUTOMATSKI LOGIN
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        // Debug ispis
-        console.log('Setting cookie for register:', token.substring(0, 20) + '...');
-
         res.cookie('token', token, getCookieOptions());
         res.status(201).json({ message: 'User registered and logged in successfully.' });
     } catch (err) {
@@ -147,9 +151,6 @@ app.post('/api/login', async (req, res) => {
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        // Debug ispis
-        console.log('Setting cookie for login:', token.substring(0, 20) + '...');
-
         res.cookie('token', token, getCookieOptions());
         res.json({ message: 'Login successful.' });
     } catch (err) {
@@ -160,7 +161,6 @@ app.post('/api/login', async (req, res) => {
 
 // ME
 app.get('/api/me', async (req, res) => {
-    console.log('Cookies in /api/me:', req.cookies);
     const token = req.cookies.token;
     if (!token) {
         return res.json({ loggedIn: false });
@@ -202,7 +202,7 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server radi na http://localhost:${PORT}`);
-    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
     console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
     console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
 });
