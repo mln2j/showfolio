@@ -32,23 +32,13 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-function getCookieOptions(req) {
-    const host = req.headers.origin || req.hostname || '';
-    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
-    if (isLocalhost) {
-        return {
-            httpOnly: false,
-            maxAge: 3600000
-        };
-    } else {
-        return {
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true,
-            maxAge: 3600000,
-            domain: '.showfolio.netlify.app' // zamijeni s tvojom frontend domenom!
-        };
-    }
+// Debug funkcija za cookie opcije
+function getCookieOptions() {
+    // Privremeno: jednostavne opcije bez sigurnosnih postavki
+    return {
+        httpOnly: false, // privremeno omogućeno za debug
+        maxAge: 3600000
+    };
 }
 
 const storage = multer.diskStorage({
@@ -73,6 +63,16 @@ const authenticate = (req, res, next) => {
     }
 };
 
+// Debug endpoint za provjeru cookieja
+app.get('/api/debug-cookies', (req, res) => {
+    console.log('Request cookies:', req.cookies);
+    res.json({
+        cookies: req.cookies,
+        headers: req.headers
+    });
+});
+
+// PROFILE
 app.post('/api/profile', authenticate, upload.single('photo'), async (req, res) => {
     try {
         const user = await User.findById(req.userId);
@@ -101,6 +101,7 @@ app.post('/api/profile', authenticate, upload.single('photo'), async (req, res) 
     }
 });
 
+// REGISTER
 app.post('/api/register', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -115,9 +116,13 @@ app.post('/api/register', async (req, res) => {
         const newUser = new User({ email, passwordHash });
         await newUser.save();
 
-        // AUTOMATSKI LOGIN: generiraj token i postavi cookie
+        // AUTOMATSKI LOGIN
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.cookie('token', token, getCookieOptions(req));
+
+        // Debug ispis
+        console.log('Setting cookie for register:', token.substring(0, 20) + '...');
+
+        res.cookie('token', token, getCookieOptions());
         res.status(201).json({ message: 'User registered and logged in successfully.' });
     } catch (err) {
         console.error(err);
@@ -125,6 +130,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// LOGIN
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -138,7 +144,11 @@ app.post('/api/login', async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.cookie('token', token, getCookieOptions(req));
+
+        // Debug ispis
+        console.log('Setting cookie for login:', token.substring(0, 20) + '...');
+
+        res.cookie('token', token, getCookieOptions());
         res.json({ message: 'Login successful.' });
     } catch (err) {
         console.error(err);
@@ -146,7 +156,9 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// ME
 app.get('/api/me', async (req, res) => {
+    console.log('Cookies in /api/me:', req.cookies);
     const token = req.cookies.token;
     if (!token) {
         return res.json({ loggedIn: false });
@@ -165,23 +177,30 @@ app.get('/api/me', async (req, res) => {
             photoUrl: user.photoUrl
         });
     } catch (err) {
+        console.error('JWT verify error:', err);
         res.json({ loggedIn: false });
     }
 });
 
+// LOGOUT
 app.post('/api/logout', (req, res) => {
-    res.clearCookie('token', getCookieOptions(req));
+    res.clearCookie('token', getCookieOptions());
     res.json({ message: 'Logged out' });
 });
 
+// ROOT
 app.get('/', (req, res) => {
     res.json({ status: 'OK', message: 'Backend radi!' });
 });
 
+// 404
 app.use((req, res) => {
     res.status(404).json({ message: 'Not found' });
 });
 
 app.listen(PORT, () => {
     console.log(`Server radi na http://localhost:${PORT}`);
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
+    console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
 });
