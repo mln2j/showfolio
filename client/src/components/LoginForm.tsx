@@ -19,10 +19,18 @@ export default function LoginForm() {
         });
 
         if (res.ok) {
-            setTimeout(() => {
-                window.location.href = '/profileSetup';
-            }, 2000000); // 200-300ms je dovoljno
-        } else {
+            // Provjeri je li cookie postavljen
+            setTimeout(async () => {
+                const meRes = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
+                const meData = await meRes.json();
+                if (meData.loggedIn) {
+                    window.location.href = '/profileSetup';
+                } else {
+                    setMsg('Login failed, please try again.');
+                }
+            }, 200);
+        }
+        else {
             const data = await res.json();
             setMsg(data.message || 'Login failed');
         }
