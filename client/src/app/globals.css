@@ -694,3 +694,126 @@ a {
   border: 1px solid #fca5a5;
 }
 
+@media (max-width: 600px) {
+  .auth-page {
+    align-items: flex-start;
+    padding: 0 12px 24px 12px;
+  }
+
+  .auth-card {
+    max-width: 100%;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 24px 12px;
+    margin: 0;
+  }
+
+  .auth-form {
+    gap: 16px;
+  }
+
+  .form-group {
+    gap: 6px;
+  }
+
+  .form-group input {
+    font-size: 1.1rem;
+    padding: 14px 16px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1rem;
+  }
+
+  .auth-footer {
+    margin-top: 16px;
+    font-size: 0.95rem;
+  }
+
+  .logo h2 {
+    font-size: 1.5rem;
+  }
+
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .navbar-links {
+    gap: 8px;
+  }
+
+  .navbar-logo {
+    font-size: 1.2rem;
+  }
+
+  .navbar-avatar, .navbar-initial {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .profile-page {
+    padding: 12px 16px;
+    margin: 20px auto;
+  }
+
+  .profile-photo {
+    width: 120px;
+    height: 120px;
+    border-width: 3px;
+  }
+
+  .profile-initial {
+    width: 120px;
+    height: 120px;
+    font-size: 3rem;
+  }
+
+  .profile-section {
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .navbar-dropdown {
+    min-width: 140px;
+    top: 40px;
+  }
+
+  .navbar-dropdown-link {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .photo-upload {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+  }
+
+  .photo-preview, .photo-preview-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .photo-remove {
+    width: 24px;
+    height: 24px;
+    top: 4px;
+    right: 4px;
+  }
+
+  .form-message {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+}
+
