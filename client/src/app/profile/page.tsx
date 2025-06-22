@@ -3,8 +3,18 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Loader from "@/components/Loader";
 
+type User = {
+    loggedIn: true;
+    email: string;
+    photoUrl?: string;
+    firstName?: string;
+    lastName?: string;
+} | {
+    loggedIn: false;
+} | null;
+
 export default function ProfilePage() {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
@@ -31,8 +41,10 @@ export default function ProfilePage() {
     }, [API_URL, router]);
 
     if (loading) return <Loader />;
-    if (!user) return null;
+    // Prikaži ništa dok user nije učitan ili nije prijavljen
+    if (!user || !user.loggedIn) return null;
 
+    // Sada TypeScript zna da je user.loggedIn === true, pa možeš pristupati svim poljima
     return (
         <div className="profile-page">
             <div className="profile-header">
@@ -44,7 +56,7 @@ export default function ProfilePage() {
                     />
                 ) : (
                     <div className="profile-initial">
-                        {user.email?.charAt(0).toUpperCase()}
+                        {user.email.charAt(0).toUpperCase()}
                     </div>
                 )}
                 <h1>{user.firstName || ''} {user.lastName || ''}</h1>
