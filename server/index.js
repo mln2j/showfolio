@@ -103,8 +103,8 @@ app.post('/api/register', async (req, res) => {
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'none',
+            secure: true,
             maxAge: 3600000
         });
 
@@ -132,8 +132,8 @@ app.post('/api/login', async (req, res) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'none',
+            secure: true,
             maxAge: 3600000
         });
 
@@ -173,7 +173,7 @@ app.get('/api/me', async (req, res) => {
 
 
 app.post('/api/logout', (req, res) => {
-    res.clearCookie('token', { httpOnly: true, sameSite: 'strict', secure: process.env.NODE_ENV === 'production' });
+    res.clearCookie('token', { httpOnly: true, sameSite: 'none', secure: true});
     res.json({ message: 'Logged out' });
 });
 
