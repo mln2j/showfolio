@@ -5,8 +5,9 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const User = require('./models/User');
+const Showfolio = require('./models/Showfolio');
 const multer = require('multer');
-const fs = require('fs'); // DODAJ OVAJ IMPORT
+const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
@@ -166,6 +167,68 @@ app.patch('/api/settings/password', authenticate, async (req, res) => {
     }
 });
 
+// GET /api/showfolio - Dohvati svoj showfolio
+app.get('/api/showfolio', authenticate, async (req, res) => {
+    try {
+        let showfolio = await Showfolio.findOne({ user: req.userId });
+        if (!showfolio) {
+            // Ako ne postoji, kreiraj defaultni showfolio
+            showfolio = await Showfolio.create({
+                user: req.userId,
+                isPublic: true,
+                isUnlisted: false,
+                primaryColor: "#6366f1",
+                sections: [],
+                links: []
+            });
+        }
+        res.json(showfolio);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// PATCH /api/showfolio - Uredi svoj showfolio
+app.patch('/api/showfolio', authenticate, async (req, res) => {
+    try {
+        let showfolio = await Showfolio.findOne({ user: req.userId });
+        if (!showfolio) {
+            return res.status(404).json({ message: "Showfolio not found" });
+        }
+        // Dozvoli update samo ovih polja:
+        const { isPublic, isUnlisted, primaryColor, sections, links } = req.body;
+        if (typeof isPublic === "boolean") showfolio.isPublic = isPublic;
+        if (typeof isUnlisted === "boolean") showfolio.isUnlisted = isUnlisted;
+        if (primaryColor) showfolio.primaryColor = primaryColor;
+        if (sections) showfolio.sections = sections;
+        if (links) showfolio.links = links;
+        await showfolio.save();
+        res.json(showfolio);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// GET /api/showfolio/:username - Javni prikaz showfolija
+app.get('/api/showfolio/:username', async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.params.username }) // ili koristi username polje
+        if (!user) return res.status(404).json({ message: "User not found" });
+        const showfolio = await Showfolio.findOne({ user: user._id });
+        if (!showfolio) return res.status(404).json({ message: "Showfolio not found" });
+
+        // Privatnost
+        if (!showfolio.isPublic && !showfolio.isUnlisted) {
+            return res.status(403).json({ message: "Showfolio is private" });
+        }
+        res.json(showfolio);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 
 // REGISTER
