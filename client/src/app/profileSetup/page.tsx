@@ -21,6 +21,7 @@ export default function ProfileSetup() {
     const [photo, setPhoto] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [msg, setMsg] = useState('');
+    const [msgType, setMsgType] = useState<'success' | 'error' | 'info'>('info');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
@@ -88,6 +89,7 @@ export default function ProfileSetup() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMsg('');
+        setMsgType('info');
         const formData = new FormData();
         formData.append('firstName', firstName);
         formData.append('lastName', lastName);
@@ -100,14 +102,24 @@ export default function ProfileSetup() {
         });
 
         if (res.ok) {
+            setMsgType('success');
             setMsg('Profile updated!');
             window.dispatchEvent(new Event('userUpdated'));
             setTimeout(() => router.replace('/profile'), 1000);
         } else {
+            setMsgType('error');
             const data = await res.json();
             setMsg(data.message || 'Update failed');
         }
     };
+
+    // Automatski ukloni success poruku nakon 2s
+    useEffect(() => {
+        if (msg && msgType === 'success') {
+            const timeout = setTimeout(() => setMsg(''), 2000);
+            return () => clearTimeout(timeout);
+        }
+    }, [msg, msgType]);
 
     if (loading) return <Loader />;
     if (!user || !user.loggedIn) return null;
@@ -178,7 +190,7 @@ export default function ProfileSetup() {
                         />
                     </div>
                     <button type="submit" className="btn-primary">Save Profile</button>
-                    {msg && <div className="form-message">{msg}</div>}
+                    {msg && <div className={`form-message ${msgType}`}>{msg}</div>}
                 </form>
             </div>
         </div>

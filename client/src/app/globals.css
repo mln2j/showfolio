@@ -667,3 +667,30 @@ a {
   100% { transform: rotate(360deg);}
 }
 
+.form-message {
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 16px;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.form-message.success {
+  background: #d1fae5;
+  color: #059669;
+  border: 1px solid #6ee7b7;
+}
+
+.form-message.info {
+  background: #dbeafe;
+  color: #2563eb;
+  border: 1px solid #93c5fd;
+}
+
+.form-message.error {
+  background: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+}
+
