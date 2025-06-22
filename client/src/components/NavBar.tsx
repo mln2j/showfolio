@@ -6,12 +6,16 @@ import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 
 export function NavBar() {
     const { user, loading } = useCurrentUser();
-    const [menuOpen, setMenuOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
+    const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const desktopDropdownRef = useRef<HTMLDivElement>(null);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
 
-    // @ts-expect-error Ne razumijem ovaj error
-    useOnClickOutside(dropdownRef, () => setMenuOpen(false));
+    // Zatvori mobilni meni kad klikneš izvan njega
+    useOnClickOutside(mobileMenuRef, () => setMobileMenuOpen(false));
+    // Zatvori desktop dropdown kad line izvan njega
+    useOnClickOutside(desktopDropdownRef, () => setDesktopDropdownOpen(false));
 
     const handleLogout = async () => {
         await fetch(`${API_URL}/api/logout`, {
@@ -21,26 +25,13 @@ export function NavBar() {
         window.location.href = "/login";
     };
 
-    // Hamburger ikona za mobile
-    const Hamburger = (
-        <button
-            className="navbar-hamburger"
-            aria-label="Open menu"
-            onClick={() => setMenuOpen(v => !v)}
-        >
-            <span className={`hamburger-bar${menuOpen ? ' open' : ''}`}></span>
-            <span className={`hamburger-bar${menuOpen ? ' open' : ''}`}></span>
-            <span className={`hamburger-bar${menuOpen ? ' open' : ''}`}></span>
-        </button>
-    );
-
-    // Linkovi za user meni
+    // Navigacijski linkovi za oba menija
     const userLinks = (
         <>
-            <Link href="/profile" className="navbar-dropdown-link">Profile</Link>
-            <Link href="/my-showfolio" className="navbar-dropdown-link">My Showfolio</Link>
-            <Link href="/settings" className="navbar-dropdown-link">Settings</Link>
-            <button className="navbar-dropdown-link logout" onClick={handleLogout}>Logout</button>
+            <Link href="/profile" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>Profile</Link>
+            <Link href="/my-showfolio" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>My Showfolio</Link>
+            <Link href="/settings" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>Settings</Link>
+            <button className="navbar-sheet-link logout" onClick={handleLogout}>Logout</button>
         </>
     );
 
@@ -48,6 +39,7 @@ export function NavBar() {
         <nav className="navbar">
             <Link href="/" className="navbar-logo">Showfolio</Link>
             <div className="navbar-links">
+                {/* Gosti */}
                 {!loading && (!user || !user.loggedIn) && (
                     <>
                         <Link href="/login" className="navbar-link navbar-login">Login</Link>
@@ -55,14 +47,16 @@ export function NavBar() {
                         <Link href="/register" className="navbar-link">Get Started</Link>
                     </>
                 )}
+                {/* Prijavljeni korisnik */}
                 {!loading && user?.loggedIn && (
                     <>
-                        {/* Desktop dropdown */}
-                        <div className="navbar-user-desktop" ref={dropdownRef}>
+                        {/* Desktop: avatar + ime + dropdown */}
+                        <div className="navbar-user-desktop" ref={desktopDropdownRef}>
                             <button
                                 className="navbar-avatar-btn"
-                                onClick={() => setMenuOpen(v => !v)}
-                                aria-label="Open user menu"
+                                aria-label="User menu"
+                                tabIndex={0}
+                                onClick={() => setDesktopDropdownOpen(v => !v)}
                             >
                                 {user.photoUrl ? (
                                     <img
@@ -77,27 +71,24 @@ export function NavBar() {
                                 )}
                                 <span className="navbar-user-name">{user.firstName || ''} {user.lastName || ''}</span>
                             </button>
-                            <div className={`navbar-dropdown${menuOpen ? " open" : ""}`}>
-                                <div className="navbar-dropdown-info">
-                                    <strong>{user.firstName || ""} {user.lastName || ""}</strong>
-                                </div>
-                                <div className="navbar-dropdown-divider"></div>
+                            <div className={`navbar-dropdown${desktopDropdownOpen ? " open" : ""}`}>
                                 {userLinks}
                             </div>
                         </div>
-                        {/* Hamburger za mobile */}
-                        <div className="navbar-mobile-menu-btn">
-                            {Hamburger}
-                        </div>
-                        {/* Mobile fullscreen meni */}
-                        <div className={`navbar-mobile-menu${menuOpen ? " open" : ""}`}>
-                            <div className="navbar-mobile-menu-content">
-                                <button
-                                    className="navbar-mobile-close"
-                                    aria-label="Close menu"
-                                    onClick={() => setMenuOpen(false)}
-                                >×</button>
-                                <div className="navbar-mobile-user">
+                        {/* Mobile: hamburger */}
+                        <button
+                            className={`navbar-hamburger${mobileMenuOpen ? " open" : ""}`}
+                            aria-label="Open menu"
+                            onClick={() => setMobileMenuOpen(v => !v)}
+                        >
+                            <span className="bar"></span>
+                            <span className="bar"></span>
+                            <span className="bar"></span>
+                        </button>
+                        {/* Mobile sheet meni */}
+                        <div className={`navbar-sheet${mobileMenuOpen ? " open" : ""}`} ref={mobileMenuRef}>
+                            <div className="navbar-sheet-content">
+                                <div className="navbar-sheet-header">
                                     {user.photoUrl ? (
                                         <img
                                             src={user.photoUrl.startsWith('http') ? user.photoUrl : `${API_URL}${user.photoUrl}`}
@@ -114,7 +105,7 @@ export function NavBar() {
                                         <div className="navbar-email">{user.email}</div>
                                     </div>
                                 </div>
-                                <div className="navbar-mobile-links">
+                                <div className="navbar-sheet-links">
                                     {userLinks}
                                 </div>
                             </div>
