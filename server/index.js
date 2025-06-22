@@ -34,7 +34,7 @@ const corsOptions = {
         'https://showfolio.netlify.app'
     ],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 
@@ -111,6 +111,62 @@ app.post('/api/profile', authenticate, upload.single('photo'), async (req, res) 
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+// PATCH /api/settings - Ažuriraj profil (ime, prezime, slika)
+app.patch('/api/settings', authenticate, upload.single('photo'), async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        // Ažuriraj ime i prezime
+        if (req.body.firstName) user.firstName = req.body.firstName;
+        if (req.body.lastName) user.lastName = req.body.lastName;
+
+        // Ažuriraj sliku ako je uploadana
+        if (req.file) {
+            user.photoUrl = `/uploads/${req.file.filename}`;
+        }
+
+        await user.save();
+
+        res.json({
+            message: 'Profile updated',
+            user: {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                photoUrl: user.photoUrl
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// PATCH /api/settings/password
+app.patch('/api/settings/password', authenticate, async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword) {
+        return res.status(400).json({ message: 'Both passwords required' });
+    }
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        const oldHash = crypto.createHash('sha256').update(oldPassword).digest('hex');
+        if (user.passwordHash !== oldHash) {
+            return res.status(401).json({ message: 'Old password incorrect' });
+        }
+        user.passwordHash = crypto.createHash('sha256').update(newPassword).digest('hex');
+        await user.save();
+        res.json({ message: 'Password changed' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 
 // REGISTER
 app.post('/api/register', async (req, res) => {

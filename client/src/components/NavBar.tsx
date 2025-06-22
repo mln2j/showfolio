@@ -29,7 +29,6 @@ export function NavBar() {
         window.location.href = "/login";
     };
 
-    // Navigacijski linkovi za oba menija
     const userLinks = (
         <>
             <Link href="/profile" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>Profile</Link>

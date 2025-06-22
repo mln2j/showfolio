@@ -1098,3 +1098,25 @@ a {
   }
 }
 
+.settings-page {
+  max-width: 480px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.07);
+  padding: 32px 18px;
+}
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.settings-form h2 {
+  font-size: 1.18rem;
+  margin-bottom: 8px;
+}
+@media (min-width: 768px) {
+  .settings-page { padding: 48px 32px; max-width: 600px; }
+}
+
