@@ -25,17 +25,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', corsOptions.origin);
-    res.setHeader('Access-Control-Allow-Methods', corsOptions.methods.join(','));
-    res.setHeader('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.sendStatus(204);
-});
 app.use(express.json());
 app.use(cookieParser());
-
-
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
@@ -43,11 +34,10 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 
 // Debug funkcija za cookie opcije
 function getCookieOptions() {
+    // Privremeno: jednostavne opcije bez sigurnosnih postavki
     return {
-        httpOnly: true,
-            sameSite: 'none',
-            secure: true,
-            maxAge: 3600000,
+        httpOnly: true, // privremeno omogućeno za debug“
+        maxAge: 3600000
     };
 }
 
