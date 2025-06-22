@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Loader from "@/components/Loader";
 
 export default function ProfilePage() {
     const [user, setUser] = useState<any>(null);
@@ -29,8 +30,8 @@ export default function ProfilePage() {
         fetchProfile();
     }, [API_URL, router]);
 
-    if (loading) return <div>Loading...</div>;
-    if (!user) return null; // ili error poruka
+    if (loading) return <Loader />;
+    if (!user) return null;
 
     return (
         <div className="profile-page">

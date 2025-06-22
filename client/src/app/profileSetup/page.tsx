@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Loader from "@/components/Loader";
 
 type User = {
     loggedIn: true;
@@ -108,7 +109,7 @@ export default function ProfileSetup() {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loader />;
     if (!user || !user.loggedIn) return null;
 
     return (
