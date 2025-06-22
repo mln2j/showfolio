@@ -5,7 +5,6 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import Link from 'next/link';
 import RegisterForm from '@/components/RegisterForm';
 import Logo from '@/components/Logo';
-import Loader from '@/components/Loader';
 
 export default function RegisterPage() {
     const { user, loading } = useCurrentUser();
