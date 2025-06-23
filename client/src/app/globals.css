@@ -1624,7 +1624,6 @@ a {
   border: 2px solid #e5e7eb;
   transition: border 0.18s, box-shadow 0.18s;
   cursor: pointer;
-  margin-right: 18px;
   position: relative;
 }
 
