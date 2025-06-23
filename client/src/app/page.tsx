@@ -8,7 +8,7 @@ export default function HomePage() {
                 <p>
                     <b>Showfolio</b> is an easy way to create, edit, and share your professional portfolio or CV online.
                     <br />
-                    Discover inspiring profiles from other users or build your own. No registration required to browse!
+                    Discover inspiring profiles from other users or build your own. No registration required to view!
                 </p>
                 <div className="cta-buttons">
                     <Link href="/register" className="btn-primary">Sign up</Link>

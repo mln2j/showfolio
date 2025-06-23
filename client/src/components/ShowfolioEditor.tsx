@@ -3,6 +3,7 @@
 'use client'
 import { useShowfolio } from "@/hooks/useShowfolio";
 import { useEffect, useState } from "react";
+import Loader from "@/components/Loader";
 
 export default function ShowfolioEditor() {
     const { showfolio, setShowfolio, saveShowfolio, loading } = useShowfolio();
@@ -33,7 +34,7 @@ export default function ShowfolioEditor() {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loader />;
     if (!showfolio) return <div>Error loading showfolio</div>;
 
     // Handlanje polja

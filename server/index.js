@@ -40,7 +40,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: '20mb' })); // ili više po potrebi
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(cookieParser());
 app.use('/uploads', express.static('uploads'));
 
@@ -167,18 +168,26 @@ app.patch('/api/settings/password', authenticate, async (req, res) => {
     }
 });
 
-// GET /api/showfolio - Dohvati svoj showfolio
+const defaultSections = [
+    { type: "about", content: "" },
+    { type: "experience", content: [] },
+    { type: "education", content: [] },
+    { type: "projects", content: [] },
+    { type: "skills", content: [] },
+    { type: "links", content: [] },
+    { type: "contact", content: { email: "", phone: "", address: "", photoUrl: "" } }
+];
+
+// GET /api/showfolio
 app.get('/api/showfolio', authenticate, async (req, res) => {
     try {
         let showfolio = await Showfolio.findOne({ user: req.userId });
         if (!showfolio) {
-            // Ako ne postoji, kreiraj defaultni showfolio
             showfolio = await Showfolio.create({
                 user: req.userId,
-                isPublic: true,
-                isUnlisted: false,
+                visibility: "public",
                 primaryColor: "#6366f1",
-                sections: [],
+                sections: defaultSections,
                 links: []
             });
         }
@@ -189,6 +198,32 @@ app.get('/api/showfolio', authenticate, async (req, res) => {
     }
 });
 
+app.post('/api/showfolio/photo', authenticate, upload.single('photo'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+
+        // Pronađi showfolio korisnika
+        let showfolio = await Showfolio.findOne({ user: req.userId });
+        if (!showfolio) {
+            return res.status(404).json({ message: "Showfolio not found" });
+        }
+
+        // Nađi contact sekciju i upiši photoUrl
+        const url = `/uploads/${req.file.filename}`;
+        const contactIdx = showfolio.sections.findIndex(s => s.type === "contact");
+        if (contactIdx !== -1) {
+            showfolio.sections[contactIdx].content.photoUrl = url;
+        }
+        await showfolio.save();
+
+        res.json({ photoUrl: url });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 // PATCH /api/showfolio - Uredi svoj showfolio
 app.patch('/api/showfolio', authenticate, async (req, res) => {
     try {
@@ -197,9 +232,10 @@ app.patch('/api/showfolio', authenticate, async (req, res) => {
             return res.status(404).json({ message: "Showfolio not found" });
         }
         // Dozvoli update samo ovih polja:
-        const { isPublic, isUnlisted, primaryColor, sections, links } = req.body;
-        if (typeof isPublic === "boolean") showfolio.isPublic = isPublic;
-        if (typeof isUnlisted === "boolean") showfolio.isUnlisted = isUnlisted;
+        const { visibility, primaryColor, sections, links } = req.body;
+        if (visibility && ["public", "unlisted", "private"].includes(visibility)) {
+            showfolio.visibility = visibility;
+        }
         if (primaryColor) showfolio.primaryColor = primaryColor;
         if (sections) showfolio.sections = sections;
         if (links) showfolio.links = links;
@@ -211,18 +247,23 @@ app.patch('/api/showfolio', authenticate, async (req, res) => {
     }
 });
 
+
 app.get('/api/showfolio/:showfolioId', async (req, res) => {
     try {
         const showfolio = await Showfolio.findOne({ showfolioId: req.params.showfolioId }).populate('user');
         if (!showfolio) return res.status(404).json({ message: "Showfolio not found" });
-        if (!showfolio.isPublic && !showfolio.isUnlisted) {
+
+        // Privatnost
+        if (showfolio.visibility === "private") {
             return res.status(403).json({ message: "Showfolio is private" });
         }
+        // "public" i "unlisted" su dostupni svakome s linkom
         res.json(showfolio);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 
 
