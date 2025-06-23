@@ -211,24 +211,19 @@ app.patch('/api/showfolio', authenticate, async (req, res) => {
     }
 });
 
-// GET /api/showfolio/:username - Javni prikaz showfolija
-app.get('/api/showfolio/:username', async (req, res) => {
+app.get('/api/showfolio/:showfolioId', async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.params.username }) // ili koristi username polje
-        if (!user) return res.status(404).json({ message: "User not found" });
-        const showfolio = await Showfolio.findOne({ user: user._id });
+        const showfolio = await Showfolio.findOne({ showfolioId: req.params.showfolioId }).populate('user');
         if (!showfolio) return res.status(404).json({ message: "Showfolio not found" });
-
-        // Privatnost
         if (!showfolio.isPublic && !showfolio.isUnlisted) {
             return res.status(403).json({ message: "Showfolio is private" });
         }
         res.json(showfolio);
     } catch (err) {
-        console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 
 
 // REGISTER

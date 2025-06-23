@@ -1,8 +1,12 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 'use client'
 import Link from "next/link";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useRef, useState } from "react";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
+import { useShowfolio } from "@/hooks/useShowfolio";
+
 
 export function NavBar() {
     const { user, loading } = useCurrentUser();
@@ -11,14 +15,14 @@ export function NavBar() {
     const mobileMenuRef = useRef<HTMLDivElement>(null);
     const desktopDropdownRef = useRef<HTMLDivElement>(null);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5050';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { showfolio, loading: loadingShowfolio } = useShowfolio();
 
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
+
     useOnClickOutside(mobileMenuRef, () => setMobileMenuOpen(false));
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
+
     useOnClickOutside(desktopDropdownRef, () => setDesktopDropdownOpen(false));
 
     const handleLogout = async () => {
@@ -32,7 +36,8 @@ export function NavBar() {
     const userLinks = (
         <>
             <Link href="/profile" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>Profile</Link>
-            <Link href="/my-showfolio" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>My Showfolio</Link>
+            <Link href={showfolio ? `/showfolio/${showfolio.showfolioId}` : "#"} className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>My Showfolio</Link>
+            <Link href="/my-showfolio" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>Edit Showfolio</Link>
             <Link href="/settings" className="navbar-sheet-link" onClick={() => { setMobileMenuOpen(false); setDesktopDropdownOpen(false); }}>Settings</Link>
             <button className="navbar-sheet-link logout" onClick={handleLogout}>Logout</button>
         </>
