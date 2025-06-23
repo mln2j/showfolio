@@ -32,7 +32,7 @@ export default function ShowfolioPage() {
                     {section.type === "about" && <p>{section.content}</p>}
                     {section.type === "experience" && (
                         <ul>
-                            {(section.content || []).map((exp: any, i: number) => (
+                            {(section.content || []).map((exp: never, i: number) => (
                                 <li key={i}><strong>{exp.role}</strong> - {exp.company} ({exp.years})</li>
                             ))}
                         </ul>
