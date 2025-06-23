@@ -6,8 +6,9 @@ import { usePublicShowfolio } from "@/hooks/usePublicShowfolio";
 
 export default function ShowfolioPage() {
     const params = useParams();
-    const username = params?.username as string;
-    const { showfolio, loading } = usePublicShowfolio(username);
+    const showfolioId = params?.showfolioId as string;
+    const { showfolio, loading } = usePublicShowfolio(showfolioId);
+
 
     if (loading) return <div>Loading...</div>;
     if (!showfolio) return <div>Showfolio not found or private.</div>;
