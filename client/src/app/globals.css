@@ -1695,7 +1695,6 @@ a {
   .photo-upload {
     width: 74px;
     height: 74px;
-    margin-right: 0;
     margin-bottom: 10px;
   }
 }
@@ -1935,6 +1934,13 @@ a {
 
 /* Na mobitelima inputi idu jedan ispod drugog */
 @media (max-width: 600px) {
+  .item-edit input,
+  .item-edit textarea {
+    flex: 1 1 16px;
+    min-width: 120px;
+    max-width: 100%;
+  }
+
   .item-edit {
     flex-direction: column;
     align-items: stretch;
