@@ -1677,9 +1677,6 @@ a {
   .showfolio-section-edit > * {
     flex: 1 1 0;
   }
-  .photo-upload {
-    margin-right: 32px;
-  }
 }
 
 @media (max-width: 600px) {
