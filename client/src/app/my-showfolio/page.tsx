@@ -99,6 +99,7 @@ export default function MyShowfolioPage() {
             updateSection("contact", { ...contact.content, photoUrl: url });
             setMsg("Photo uploaded!");
             setTimeout(() => setMsg(""), 2000);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setMsg("Error uploading photo");
         }
